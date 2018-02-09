@@ -1,0 +1,43 @@
+cls
+
+$grantsDomain = Get-Content "Grants_domain.sql"  
+$FileContent = Get-Content "*.sql" -Exclude "Grants_domain.sql"  | Select-String  "view | procedure"
+$FileNames = Get-ChildItem "*.sql" -Exclude "Grants_domain.sql"  | Select-String  "view | procedure" | group path | select name
+$GRANTS_WARNING = ""
+$Testing = "GRANTS_WARNING.txt"
+ if (Test-Path $Testing){ 
+  Remove-Item $Testing
+  }
+for ($i=0; $i  -le $FileNames.Length-1; $i++){
+$name= $FileNames[$i].name
+$basename = (Get-Item $name ).Basename
+if ( $FileContent -like "*" + $basename + "*") {
+if(!($grantsDomain -like  "*" + $basename + "*")) {
+ "not-found --> " + $basename
+ $GRANTS_WARNING =  $GRANTS_WARNING +$basename +"`r`n"
+  }
+if ((!($GRANTS_WARNING) -eq "")) {
+$GRANTS_WARNING  | out-file "GRANTS_WARNING.txt" 
+    }
+  }
+}
+
+
+
+cls
+$AllFileNames = Get-ChildItem "*.sql" -Exclude "Grants_domain.sql"  | Select-String  "ALTER" | group path | select name
+$go = "GO"
+$emptyLine = ""
+for ($i = 0; $i -le $AllFileNames.Length; $i++){
+    $EachfileName = $AllFileNames[$i].Name 
+    $content =  Get-Content $EachfileName
+
+ for ($k = $content.Length; $k -gt 0; $k--){
+    if (!( $content[$k] -eq ($emptyLine -and $go))  ){
+     # $content
+        }
+       }
+
+
+   
+   }
